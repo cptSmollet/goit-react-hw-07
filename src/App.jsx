@@ -1,27 +1,30 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import ContactForm from './components/ContactForm/ContactForm';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchContacts } from './redux/contactsOps';
+import { selectLoading } from './redux/contactsSlice';
+import Loader from './components/Loader/Loader';
 import ContactList from './components/ContactList/ContactList';
-import SearchBox from './components/SearchBox/SearchBox'; 
-import { store, persistor } from './redux/store';
-import './App.css';
+import ContactForm from './components/ContactForm/ContactForm';
 
 const App = () => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectLoading);
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <div className="appContainer">
-          <h1 className="title">Phonebook</h1>
-          <ContactForm />
-          <h2 className="subtitle">Contacts</h2>
-          <SearchBox /> 
-          <ContactList />
-        </div>
-      </PersistGate>
-    </Provider>
+    <div>
+      <h1>Phonebook</h1>
+      <ContactForm />
+      <h2>Contacts</h2>
+      {isLoading ? <Loader /> : <ContactList />}
+    </div>
   );
 };
 
 export default App;
+
+
 
